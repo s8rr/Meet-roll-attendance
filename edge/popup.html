@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Meet Roll Attendance</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div>
+          <h1>Meet Roll Attendance</h1>
+          <p class="subtitle" id="metaLine">No data yet</p>
+        </div>
+      </div>
+      <label class="switch-wrap">
+        <span class="switch-label" id="captureLabel">Auto-capture</span>
+        <button id="toggleCapture" class="switch" role="switch" aria-checked="true">
+          <span class="switch-thumb"></span>
+        </button>
+      </label>
+    </header>
+
+    <section class="stats">
+      <div class="card stat-card">
+        <span class="stat-value" id="statPresent">0</span>
+        <span class="stat-label">Present</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-value" id="statConflicts">0</span>
+        <span class="stat-label">Conflicts</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-value" id="statMessages">0</span>
+        <span class="stat-label">Roll msgs</span>
+      </div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="attendance">Attendance</button>
+      <button class="tab" data-tab="log">Chat log</button>
+    </div>
+
+    <section class="tab-panel" id="panel-attendance">
+      <div class="toolbar">
+        <input id="searchBox" type="text" placeholder="Search name or roll…" />
+        <select id="sectionFilter">
+          <option value="ALL">All sections</option>
+        </select>
+      </div>
+
+      <div class="card table-wrap">
+        <table id="attTable">
+          <thead>
+            <tr>
+              <th>Sender</th>
+              <th>Roll(s)</th>
+              <th>Section</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="attTableBody">
+            <tr class="empty-row"><td colspan="4">Waiting for chat messages…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="actions">
+        <button id="exportPdfBtn" class="btn btn-primary">Export PDF</button>
+        <button id="exportCsvBtn" class="btn btn-outline">Export CSV</button>
+        <button id="clearBtn" class="btn btn-destructive">Clear</button>
+      </div>
+    </section>
+
+    <section class="tab-panel hidden" id="panel-log">
+      <div class="toolbar">
+        <input id="logSearchBox" type="text" placeholder="Search log…" />
+        <span class="log-count"><span id="logCount">0</span> messages</span>
+      </div>
+
+      <div class="card table-wrap log-wrap">
+        <div id="logList" class="log-list">
+          <div class="empty-row">No messages logged yet.</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="exportLogTxtBtn" class="btn btn-outline">Export .txt</button>
+        <button id="exportLogCsvBtn" class="btn btn-outline">Export .csv</button>
+        <button id="clearLogBtn" class="btn btn-destructive">Clear log</button>
+      </div>
+    </section>
+
+    <details class="collapsible">
+      <summary>Chat didn't auto-capture? Paste it manually</summary>
+      <p class="hint">
+        In Meet, click inside the chat panel, press Ctrl/Cmd+A then Ctrl/Cmd+C to copy
+        all messages, then paste below.
+      </p>
+      <textarea id="pasteArea" placeholder="Paste copied chat log here…"></textarea>
+      <button id="parsePasteBtn" class="btn btn-outline">Parse pasted log</button>
+      <span id="pasteResult" class="hint"></span>
+    </details>
+
+    <details class="collapsible">
+      <summary>Section roll ranges</summary>
+      <div id="rangeEditor" class="range-editor"></div>
+      <div class="row-buttons">
+        <button id="addRangeBtn" class="btn btn-ghost small">+ Add section</button>
+        <button id="saveRangesBtn" class="btn btn-outline small">Save</button>
+      </div>
+      <span id="rangeSaveResult" class="hint"></span>
+    </details>
+
+    <details class="collapsible">
+      <summary>Settings</summary>
+      <label class="setting-row">
+        <span>Log full chat transcript</span>
+        <button id="toggleLogging" class="switch small" role="switch" aria-checked="true">
+          <span class="switch-thumb"></span>
+        </button>
+      </label>
+      <p class="hint">When on, every chat message is saved (not just ones with roll numbers) so you can review the full transcript later.</p>
+    </details>
+
+    <footer class="footer">
+      Developed by <a href="https://sabbir.cc" target="_blank" rel="noopener noreferrer">Sabbir</a>
+    </footer>
+  </div>
+
+  <script src="libs/jspdf.umd.min.js"></script>
+  <script src="libs/jspdf.plugin.autotable.min.js"></script>
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
