@@ -40,5 +40,3 @@ network requests and do not transmit data anywhere.
   script to read the chat panel on Meet pages only. No other site is
   accessed.
 
-## Contact
-[Add your contact email here before publishing.]
