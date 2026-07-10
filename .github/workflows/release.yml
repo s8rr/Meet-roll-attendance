@@ -1,0 +1,55 @@
+name: Build & Attach Extension Zips
+
+# Runs whenever a GitHub Release is published, packages the edge/ and
+# firefox/ folders into versioned zip files (manifest.json at the root of
+# each, as required for loading unpacked / AMO submission), and attaches
+# them to that same release.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version from release tag
+        id: version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "semver=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Sync manifest.json version to release tag
+        run: |
+          for DIR in edge firefox; do
+            jq --arg v "${{ steps.version.outputs.semver }}" '.version = $v' "$DIR/manifest.json" > "$DIR/manifest.tmp.json"
+            mv "$DIR/manifest.tmp.json" "$DIR/manifest.json"
+          done
+
+      - name: Package Edge build
+        run: |
+          mkdir -p dist
+          cd edge
+          zip -r -q "../dist/meet-roll-attendance-edge-${{ steps.version.outputs.tag }}.zip" . -x '*.DS_Store'
+
+      - name: Package Firefox build
+        run: |
+          mkdir -p dist
+          cd firefox
+          zip -r -q "../dist/meet-roll-attendance-firefox-${{ steps.version.outputs.tag }}.zip" . -x '*.DS_Store'
+
+      - name: Attach zips to the release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            dist/meet-roll-attendance-edge-${{ steps.version.outputs.tag }}.zip
+            dist/meet-roll-attendance-firefox-${{ steps.version.outputs.tag }}.zip
